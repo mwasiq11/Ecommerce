@@ -6,10 +6,17 @@ import { Product } from '../../types';
 import { useCartController } from '../../controllers/useCartController';
 import Button from '../../components/ui/Button';
 
+const getImageSrc = (image: string) => {
+    if (!image) return 'https://via.placeholder.com/400x400?text=No+Image';
+    if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
+    return image;
+};
+
 const ProductDetailPage: React.FC = () => {
     const { productId } = useParams<{ productId: string }>();
     const { addToCart } = useCartController();
     const [product, setProduct] = useState<Product | null>(null);
+    const [seller, setSeller] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState('Description');
@@ -18,7 +25,10 @@ const ProductDetailPage: React.FC = () => {
     useEffect(() => {
         if (!productId) return;
         apiService.getProductById(productId)
-            .then((p: any) => setProduct({ id: p._id, title: p.title, price: p.price, originalPrice: p.originalPrice, description: p.description, rating: p.rating, orders: p.orders, shipping: p.shipping, category: p.category, brand: p.brand, condition: p.condition, image: p.image, stock: p.stock }))
+            .then((p: any) => {
+                setProduct({ id: p._id, title: p.title, price: p.price, originalPrice: p.originalPrice, description: p.description, rating: p.rating, orders: p.orders, shipping: p.shipping, category: p.category, brand: p.brand, condition: p.condition, image: p.image, stock: p.stock });
+                if (p.seller) setSeller(p.seller);
+            })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, [productId]);
@@ -44,8 +54,13 @@ const ProductDetailPage: React.FC = () => {
 
             <div className="bg-white border border-border-color rounded-lg overflow-hidden flex flex-col lg:flex-row shadow-sm">
                 <div className="lg:w-1/2 p-8 border-r border-border-color">
-                    <div className="aspect-square bg-gray-50 rounded-lg border border-border-color flex items-center justify-center p-12 group cursor-zoom-in">
-                        <img src={product.image} alt={product.title} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                    <div className="aspect-square bg-gray-50 rounded-lg border border-border-color flex items-center justify-center p-12 group cursor-zoom-in overflow-hidden">
+                        <img
+                            src={getImageSrc(product.image)}
+                            alt={product.title}
+                            className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x400?text=No+Image'; }}
+                        />
                     </div>
                 </div>
                 <div className="lg:w-1/2 p-8 space-y-6">
@@ -66,6 +81,15 @@ const ProductDetailPage: React.FC = () => {
                         <div className="grid grid-cols-3 text-sm py-2 border-b border-gray-100"><span className="text-gray-400">Brand:</span><span className="col-span-2 text-gray-700 font-medium">{product.brand}</span></div>
                         <div className="grid grid-cols-3 text-sm py-2 border-b border-gray-100"><span className="text-gray-400">Category:</span><span className="col-span-2 text-gray-700 font-medium">{product.category}</span></div>
                         <div className="grid grid-cols-3 text-sm py-2 border-b border-gray-100"><span className="text-gray-400">Condition:</span><span className="col-span-2 text-gray-700 font-medium">{product.condition}</span></div>
+                        {seller && (
+                            <div className="grid grid-cols-3 text-sm py-2 border-b border-gray-100">
+                                <span className="text-gray-400">Seller:</span>
+                                <span className="col-span-2 text-gray-700 font-medium flex items-center gap-2">
+                                    {seller.avatar && <img src={seller.avatar} className="w-6 h-6 rounded-full" alt="" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                                    {seller.name}
+                                </span>
+                            </div>
+                        )}
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <div className="flex items-center border-2 border-gray-200 rounded-lg overflow-hidden h-12">

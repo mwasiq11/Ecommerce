@@ -13,6 +13,12 @@ const mapProduct = (p: any): Product => ({
     category: p.category, brand: p.brand, condition: p.condition, image: p.image, stock: p.stock,
 });
 
+const getImageSrc = (image: string) => {
+    if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
+    if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
+    return image;
+};
+
 const HomePage: React.FC = () => {
     const { user, logout } = useAuth();
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 23, min: 59, sec: 59 });
@@ -49,7 +55,11 @@ const HomePage: React.FC = () => {
                 <div className="lg:w-1/4 hidden lg:block">
                     <ul className="space-y-1">
                         {CATEGORIES.map(cat => (
-                            <li key={cat.id}><button className="w-full text-left px-4 py-2 hover:bg-blue-50 hover:text-primary rounded-md transition text-gray-700 font-medium">{cat.name}</button></li>
+                            <li key={cat.id}>
+                                <Link to={`/listing?category=${encodeURIComponent(cat.name)}`} className="w-full text-left px-4 py-2 hover:bg-blue-50 hover:text-primary rounded-md transition text-gray-700 font-medium block">
+                                    {cat.name}
+                                </Link>
+                            </li>
                         ))}
                     </ul>
                 </div>
@@ -58,7 +68,9 @@ const HomePage: React.FC = () => {
                     <div className="relative z-10 max-w-sm text-white">
                         <h2 className="text-2xl font-normal mb-1">Latest trending</h2>
                         <h1 className="text-4xl font-bold mb-6">Electronic items</h1>
-                        <Button variant="secondary" size="lg" className="bg-white text-gray-900 hover:bg-gray-100 border-none px-8">Source now</Button>
+                        <Link to="/listing">
+                            <Button variant="secondary" size="lg" className="bg-white text-gray-900 hover:bg-gray-100 border-none px-8">Source now</Button>
+                        </Link>
                     </div>
                 </div>
                 <div className="lg:w-1/4 flex flex-col gap-3">
@@ -66,16 +78,31 @@ const HomePage: React.FC = () => {
                         {user ? (
                             <>
                                 <div className="flex items-center gap-3 mb-4">
-                                    <img src={user.avatar || `https://i.pravatar.cc/100?u=${user.email}`} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" alt="" />
+                                    {user.avatar ? (
+                                        <img
+                                            src={user.avatar.startsWith('/uploads') ? `http://localhost:5000${user.avatar}` : user.avatar}
+                                            className="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"
+                                            alt={user.name}
+                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary border-2 border-white shadow-sm">
+                                            {user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                    )}
                                     <p className="text-sm font-medium text-gray-800 leading-tight">Hi, {user.name.split(' ')[0]}<br /><span className="text-gray-500 text-xs">Welcome back!</span></p>
                                 </div>
                                 <Link to="/profile"><Button fullWidth size="sm" className="mb-2 shadow-sm">My Profile</Button></Link>
                                 <Link to="/orders"><Button fullWidth variant="outline" size="sm" className="bg-white hover:border-primary mb-2">My Orders</Button></Link>
+                                <Link to="/sell"><Button fullWidth variant="outline" size="sm" className="bg-white hover:border-primary mb-2 text-success border-success">🏪 Sell Product</Button></Link>
                                 <button onClick={logout} className="w-full px-3 py-1.5 text-xs text-danger font-bold border-2 border-danger rounded-md hover:bg-red-50 transition-colors">Log Out</button>
                             </>
                         ) : (
                             <>
-                                <div className="flex items-center gap-3 mb-4"><img src="https://i.pravatar.cc/100?u=user1" className="w-12 h-12 rounded-full border-2 border-white shadow-sm" alt="" /><p className="text-sm font-medium text-gray-800 leading-tight">Hi, user<br />let's get started</p></div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl border-2 border-white shadow-sm">👤</div>
+                                    <p className="text-sm font-medium text-gray-800 leading-tight">Hi, user<br />let's get started</p>
+                                </div>
                                 <Link to="/register"><Button fullWidth size="sm" className="mb-2 shadow-sm">Join now</Button></Link>
                                 <Link to="/login"><Button fullWidth variant="outline" size="sm" className="bg-white hover:border-primary">Log in</Button></Link>
                             </>
@@ -104,7 +131,12 @@ const HomePage: React.FC = () => {
                     {products.slice(0, 5).map(prod => (
                         <Link to={`/product/${prod.id}`} key={prod.id} className="p-6 border-r border-border-color last:border-r-0 hover:bg-gray-50 transition flex flex-col items-center text-center group">
                             <div className="h-32 w-full flex items-center justify-center mb-4">
-                                <img src={prod.image} alt={prod.title} className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300" />
+                                <img
+                                    src={getImageSrc(prod.image)}
+                                    alt={prod.title}
+                                    className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-300"
+                                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150x150?text=No+Image'; }}
+                                />
                             </div>
                             <p className="text-sm text-gray-700 mb-1 font-medium truncate w-full">{prod.title.split(',')[0]}</p>
                             {prod.originalPrice && <span className="bg-[#FFE3E3] text-[#EB001B] px-3 py-1 rounded-full text-xs font-bold">-{Math.round((1 - prod.price / prod.originalPrice) * 100)}%</span>}
@@ -120,7 +152,12 @@ const HomePage: React.FC = () => {
                     {products.map(prod => (
                         <Link to={`/product/${prod.id}`} key={prod.id} className="bg-white border border-border-color rounded-xl p-5 hover:shadow-lg hover:border-primary transition-all group block shadow-sm">
                             <div className="aspect-square w-full mb-4 flex items-center justify-center bg-gray-50/50 rounded-lg overflow-hidden">
-                                <img src={prod.image} alt={prod.title} className="max-h-[80%] max-w-[80%] object-contain group-hover:scale-110 transition-transform duration-500" />
+                                <img
+                                    src={getImageSrc(prod.image)}
+                                    alt={prod.title}
+                                    className="max-h-[80%] max-w-[80%] object-contain group-hover:scale-110 transition-transform duration-500"
+                                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150x150?text=No+Image'; }}
+                                />
                             </div>
                             <p className="font-bold text-lg mb-1 text-gray-900">${prod.price.toFixed(2)}</p>
                             <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">{prod.title}</p>
@@ -138,7 +175,16 @@ const HomePage: React.FC = () => {
                     { title: 'Product Monitoring', icon: '🛡️', img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&h=300' }
                 ].map((s, i) => (
                     <div key={i} className="bg-white border border-border-color rounded-xl overflow-hidden shadow-sm group">
-                        <div className="relative h-32"><img src={s.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" /><div className="absolute inset-0 bg-black/20"></div><div className="absolute bottom-[-20px] right-6 w-12 h-12 bg-[#D1E7FF] border-4 border-white rounded-full flex items-center justify-center text-xl shadow-md">{s.icon}</div></div>
+                        <div className="relative h-32">
+                            <img
+                                src={s.img}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                alt={s.title}
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                            <div className="absolute inset-0 bg-black/20"></div>
+                            <div className="absolute bottom-[-20px] right-6 w-12 h-12 bg-[#D1E7FF] border-4 border-white rounded-full flex items-center justify-center text-xl shadow-md">{s.icon}</div>
+                        </div>
                         <div className="p-6 pt-8"><h4 className="font-bold text-gray-800 text-sm leading-snug">{s.title}</h4></div>
                     </div>
                 ))}

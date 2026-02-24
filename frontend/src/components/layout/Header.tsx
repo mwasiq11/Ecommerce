@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                     </div>
-                    <span className="text-2xl font-bold text-primary tracking-tight">Brand</span>
+                    <span className="text-2xl font-bold text-primary tracking-tight">MarketPlace Pro</span>
                 </Link>
 
                 {/* Search Bar */}
@@ -68,7 +68,18 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
                         <>
                             {/* Logged-in: Profile, Messages, Orders, Cart, Admin, Logout */}
                             <Link to="/profile" className="hidden sm:flex flex-col items-center cursor-pointer group">
-                                <svg className="w-6 h-6 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                {user.avatar ? (
+                                    <img
+                                        src={user.avatar.startsWith('/uploads') ? `http://localhost:5000${user.avatar}` : user.avatar}
+                                        alt={user.name}
+                                        className="w-7 h-7 rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-all"
+                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; if ((e.target as HTMLImageElement).nextElementSibling) (e.target as HTMLImageElement).nextElementSibling.classList.remove('hidden'); }}
+                                    />
+                                ) : (
+                                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary group-hover:bg-primary/20 transition">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                )}
                                 <span className="text-xs text-gray-500 mt-1 font-medium group-hover:text-primary">{user.name.split(' ')[0]}</span>
                             </Link>
                             <Link to="/messages" className="hidden sm:flex flex-col items-center cursor-pointer group">
@@ -78,6 +89,10 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
                             <Link to="/orders" className="flex flex-col items-center cursor-pointer group">
                                 <svg className="w-6 h-6 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                                 <span className="text-xs text-gray-500 mt-1 font-medium group-hover:text-primary hidden sm:block">Orders</span>
+                            </Link>
+                            <Link to="/sell" className="hidden sm:flex flex-col items-center cursor-pointer group">
+                                <svg className="w-6 h-6 text-gray-500 group-hover:text-green-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                <span className="text-xs text-gray-500 mt-1 font-medium group-hover:text-green-600">Sell</span>
                             </Link>
                             <Link to="/cart" className="flex flex-col items-center group relative">
                                 <svg className="w-6 h-6 text-gray-500 group-hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>

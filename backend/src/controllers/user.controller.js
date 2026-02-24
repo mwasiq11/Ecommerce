@@ -1,7 +1,13 @@
 import User from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import ENV from '../config/env.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const generateToken = (user) => {
 	return jwt.sign(
@@ -9,6 +15,24 @@ const generateToken = (user) => {
 		ENV.JWT_SECRET,
 		{ expiresIn: '7d' }
 	);
+};
+
+// Save a base64 image to the uploads/avatars directory, return the URL path
+const saveAvatarImage = (base64String) => {
+	const uploadsDir = path.join(__dirname, '..', '..', 'uploads', 'avatars');
+	if (!fs.existsSync(uploadsDir)) {
+		fs.mkdirSync(uploadsDir, { recursive: true });
+	}
+
+	const matches = base64String.match(/^data:image\/(\w+);base64,(.+)$/);
+	if (!matches) return null;
+
+	const ext = matches[1];
+	const data = matches[2];
+	const filename = `avatar_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
+	const filepath = path.join(uploadsDir, filename);
+	fs.writeFileSync(filepath, Buffer.from(data, 'base64'));
+	return `/uploads/avatars/${filename}`;
 };
 
 export const getUsers = async (_req, res) => {
@@ -94,10 +118,20 @@ export const loginUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
 	try {
+		// Handle password hashing
 		if (req.body.password) {
 			const salt = await bcrypt.genSalt(10);
 			req.body.password = await bcrypt.hash(req.body.password, salt);
 		}
+
+		// Handle base64 avatar upload
+		if (req.body.avatar && req.body.avatar.startsWith('data:image/')) {
+			const avatarUrl = saveAvatarImage(req.body.avatar);
+			if (avatarUrl) {
+				req.body.avatar = avatarUrl;
+			}
+		}
+
 		const user = await User.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
 			runValidators: true

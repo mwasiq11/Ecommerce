@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/layout/Header';
@@ -17,6 +17,8 @@ import GiftBoxesPage from './views/pages/GiftBoxesPage';
 import LoginPage from './views/pages/LoginPage';
 import RegisterPage from './views/pages/RegisterPage';
 import AdminPage from './views/pages/AdminPage';
+import SellProductPage from './views/pages/SellProductPage';
+import MyProductsPage from './views/pages/MyProductsPage';
 import {
     FavoritesPage, ContactPage, AboutPage,
     UserAgreementPage, PartnershipPage, PrivacyPolicyPage
@@ -44,6 +46,8 @@ const AppContent: React.FC = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/admin" element={<AdminPage />} />
+                    <Route path="/sell" element={<SellProductPage />} />
+                    <Route path="/my-products" element={<MyProductsPage />} />
                     <Route path="/favorites" element={<FavoritesPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/about" element={<AboutPage />} />

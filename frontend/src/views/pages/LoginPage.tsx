@@ -50,10 +50,7 @@ const LoginPage: React.FC = () => {
                             {loading ? 'Signing in...' : 'Log In'}
                         </Button>
                     </form>
-                    <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-blue-700 text-center">
-                        <strong>Demo:</strong> demo@marketplace.com / demo123<br />
-                        <strong>Admin:</strong> admin@marketplace.com / admin123
-                    </div>
+
                 </div>
                 <div className="p-6 bg-gray-50 border-t border-border-color text-center">
                     <p className="text-sm text-gray-600">Don't have an account? <Link to="/register" className="text-primary font-bold hover:underline">Register now</Link></p>

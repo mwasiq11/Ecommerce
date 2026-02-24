@@ -16,6 +16,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     register: (name: string, email: string, password: string) => Promise<void>;
     logout: () => void;
+    updateUser: (updatedUser: User) => void;
+    refreshUser: () => Promise<void>;
     loading: boolean;
     isAdmin: boolean;
 }
@@ -85,10 +87,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.removeItem('marketplace_cart');
     }, []);
 
+    // Update user data in state and localStorage (after profile edit)
+    const updateUser = useCallback((updatedUser: User) => {
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+    }, []);
+
+    // Refresh user data from the server
+    const refreshUser = useCallback(async () => {
+        const currentToken = localStorage.getItem('token');
+        if (!currentToken) return;
+        try {
+            const res = await fetch('/api/users/me', {
+                headers: { 'Authorization': `Bearer ${currentToken}` },
+            });
+            if (res.ok) {
+                const freshUser = await res.json();
+                setUser(freshUser);
+                localStorage.setItem('user', JSON.stringify(freshUser));
+            }
+        } catch (err) {
+            console.error('Failed to refresh user:', err);
+        }
+    }, []);
+
     const isAdmin = user?.role === 'admin';
 
     return (
-        <AuthContext.Provider value={{ user, token, login, register, logout, loading, isAdmin }}>
+        <AuthContext.Provider value={{ user, token, login, register, logout, updateUser, refreshUser, loading, isAdmin }}>
             {children}
         </AuthContext.Provider>
     );

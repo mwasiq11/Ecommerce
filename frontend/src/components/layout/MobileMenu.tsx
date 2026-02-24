@@ -50,6 +50,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         <MenuItem icon="❤️" label="Favorites" to="/favorites" onClick={onClose} />
                         <MenuItem icon="📦" label="My orders" to="/orders" onClick={onClose} />
                         <MenuItem icon="🛒" label="Cart" to="/cart" onClick={onClose} />
+                        {user && <MenuItem icon="🏪" label="Sell Product" to="/sell" onClick={onClose} />}
+                        {user && <MenuItem icon="📦" label="My Products" to="/my-products" onClick={onClose} />}
                     </div>
                     <div className="border-t border-gray-100 my-2"></div>
                     <div className="py-2">

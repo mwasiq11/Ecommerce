@@ -13,10 +13,14 @@ const productSchema = new mongoose.Schema(
 		brand: { type: String, default: 'Generic' },
 		condition: { type: String, enum: ['Any', 'Refurbished', 'Brand new', 'Old items'], default: 'Brand new' },
 		image: { type: String, default: '' },
-		stock: { type: Number, default: 0 }
+		stock: { type: Number, default: 0 },
+		seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }
 	},
 	{ timestamps: true }
 );
+
+// Text index for search functionality
+productSchema.index({ title: 'text', description: 'text', brand: 'text', category: 'text' });
 
 const Product = mongoose.model('Product', productSchema);
 
