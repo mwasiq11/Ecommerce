@@ -4,15 +4,18 @@ import {
 	deleteOrder,
 	getOrderById,
 	getOrders,
+	getMyOrders,
 	updateOrderStatus
 } from '../controllers/order.controller.js';
+import { auth, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/', getOrders);
-router.get('/:id', getOrderById);
-router.post('/', createOrder);
-router.patch('/:id/status', updateOrderStatus);
-router.delete('/:id', deleteOrder);
+router.get('/my', auth, getMyOrders);
+router.get('/', auth, adminOnly, getOrders);
+router.get('/:id', auth, getOrderById);
+router.post('/', auth, createOrder);
+router.patch('/:id/status', auth, adminOnly, updateOrderStatus);
+router.delete('/:id', auth, adminOnly, deleteOrder);
 
 export default router;

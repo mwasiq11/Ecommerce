@@ -4,15 +4,20 @@ import {
 	deleteUser,
 	getUserById,
 	getUsers,
+	getMe,
+	loginUser,
 	updateUser
 } from '../controllers/user.controller.js';
+import { auth, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.post('/', createUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.post('/register', createUser);
+router.post('/login', loginUser);
+router.get('/me', auth, getMe);
+router.get('/', auth, adminOnly, getUsers);
+router.get('/:id', auth, getUserById);
+router.put('/:id', auth, updateUser);
+router.delete('/:id', auth, adminOnly, deleteUser);
 
 export default router;
