@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getApiBaseUrl } from '../utils/url';
+
+const API_BASE = `${getApiBaseUrl()}/api`;
 
 interface User {
     _id: string;
@@ -46,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = useCallback(async (email: string, password: string) => {
-        const res = await fetch('/api/users/login', {
+        const res = await fetch(`${API_BASE}/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -63,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const register = useCallback(async (name: string, email: string, password: string) => {
-        const res = await fetch('/api/users/register', {
+        const res = await fetch(`${API_BASE}/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password }),
@@ -98,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const currentToken = localStorage.getItem('token');
         if (!currentToken) return;
         try {
-            const res = await fetch('/api/users/me', {
+            const res = await fetch(`${API_BASE}/users/me`, {
                 headers: { 'Authorization': `Bearer ${currentToken}` },
             });
             if (res.ok) {

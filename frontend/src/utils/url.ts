@@ -4,7 +4,8 @@
  * In development, falls back to empty string (uses Vite proxy).
  */
 export const getApiBaseUrl = (): string => {
-    return import.meta.env.VITE_API_URL || '';
+    const url = import.meta.env.VITE_API_URL || '';
+    return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
 /**
