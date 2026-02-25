@@ -14,8 +14,8 @@ const router = express.Router();
 router.get('/', getProducts);
 router.get('/my', auth, getMyProducts);
 router.get('/:id', getProductById);
-router.post('/', auth, createProduct);           // Any authenticated user can create
-router.put('/:id', auth, updateProduct);          // Any authenticated user can update
-router.delete('/:id', auth, deleteProduct);       // Any authenticated user can delete
+router.post('/', auth, createProduct);           
+router.put('/:id', auth, updateProduct);         
+router.delete('/:id', auth, deleteProduct);       
 
 export default router;

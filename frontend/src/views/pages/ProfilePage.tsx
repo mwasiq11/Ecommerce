@@ -4,11 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/apiService';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const getAvatarSrc = (avatar?: string) => {
     if (!avatar) return '';
-    if (avatar.startsWith('/uploads')) return `http://localhost:5000${avatar}`;
-    return avatar;
+    return getImageUrl(avatar);
 };
 
 const ProfilePage: React.FC = () => {

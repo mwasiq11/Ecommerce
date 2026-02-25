@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import MobileMenu from './MobileMenu';
 import { useAuth } from '../../context/AuthContext';
+import { getImageUrl } from '../../utils/url';
 
 interface HeaderProps {
     cartCount: number;
@@ -70,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount }) => {
                             <Link to="/profile" className="hidden sm:flex flex-col items-center cursor-pointer group">
                                 {user.avatar ? (
                                     <img
-                                        src={user.avatar.startsWith('/uploads') ? `http://localhost:5000${user.avatar}` : user.avatar}
+                                        src={getImageUrl(user.avatar)}
                                         alt={user.name}
                                         className="w-7 h-7 rounded-full object-cover border-2 border-transparent group-hover:border-primary transition-all"
                                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; if ((e.target as HTMLImageElement).nextElementSibling) (e.target as HTMLImageElement).nextElementSibling.classList.remove('hidden'); }}

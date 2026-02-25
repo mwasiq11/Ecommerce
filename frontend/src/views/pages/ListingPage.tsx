@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { apiService } from '../../services/apiService';
 import { Product } from '../../types';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const mapProduct = (p: any): Product => ({ id: p._id, title: p.title, price: p.price, originalPrice: p.originalPrice, description: p.description, rating: p.rating, orders: p.orders, shipping: p.shipping, category: p.category, brand: p.brand, condition: p.condition, image: p.image, stock: p.stock });
 
@@ -43,8 +44,7 @@ const ListingPage: React.FC = () => {
 
     const getImageSrc = (image: string) => {
         if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
-        if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
-        return image;
+        return getImageUrl(image) || image;
     };
 
     if (loading) return (

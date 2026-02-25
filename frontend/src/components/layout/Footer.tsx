@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
                         <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                         </div>
-                        <span className="text-2xl font-bold text-primary tracking-tight uppercase">Brand</span>
+                        <span className="text-2xl font-bold text-primary tracking-tight ">Marketplace Pro</span>
                     </div>
                     <p className="text-gray-600 mb-6 max-w-xs">Best information about the company goes here but now lorem ipsum is</p>
                     <div className="flex gap-3">

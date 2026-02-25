@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/apiService';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const MyProductsPage: React.FC = () => {
     const { user, token } = useAuth();
@@ -86,7 +87,7 @@ const MyProductsPage: React.FC = () => {
                                 <div className="aspect-square bg-gray-50 flex items-center justify-center p-4 overflow-hidden">
                                     {prod.image ? (
                                         <img
-                                            src={prod.image.startsWith('/uploads') ? `http://localhost:5000${prod.image}` : prod.image}
+                                            src={getImageUrl(prod.image)}
                                             alt={prod.title}
                                             className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-300"
                                             onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300?text=No+Image'; }}

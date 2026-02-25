@@ -5,6 +5,7 @@ import { useCartController } from '../../controllers/useCartController';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/apiService';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const CartPage: React.FC = () => {
     const { cartItems, cartTotal, removeFromCart, updateQuantity, clearCart } = useCartController();
@@ -65,8 +66,7 @@ const CartPage: React.FC = () => {
 
     const getImageSrc = (image: string) => {
         if (!image) return 'https://via.placeholder.com/100x100?text=No+Image';
-        if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
-        return image;
+        return getImageUrl(image) || image;
     };
 
     if (cartItems.length === 0) {

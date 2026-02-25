@@ -1,10 +1,4 @@
 import Product from '../models/product.model.js';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const getProducts = async (req, res) => {
 	try {
@@ -67,26 +61,7 @@ export const createProduct = async (req, res) => {
 			return res.status(400).json({ message: 'Title and price are required' });
 		}
 
-		let imageUrl = image || '';
-
-		// Handle base64 image upload
-		if (image && image.startsWith('data:image/')) {
-			const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
-			if (!fs.existsSync(uploadsDir)) {
-				fs.mkdirSync(uploadsDir, { recursive: true });
-			}
-
-			const matches = image.match(/^data:image\/(\w+);base64,(.+)$/);
-			if (matches) {
-				const ext = matches[1];
-				const data = matches[2];
-				const filename = `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-				const filepath = path.join(uploadsDir, filename);
-				fs.writeFileSync(filepath, Buffer.from(data, 'base64'));
-				imageUrl = `/uploads/${filename}`;
-			}
-		}
-
+		// Image is stored directly as-is (base64 data URL or external URL)
 		const product = await Product.create({
 			title,
 			price: Number(price),
@@ -97,7 +72,7 @@ export const createProduct = async (req, res) => {
 			condition: condition || 'Brand new',
 			stock: stock ? Number(stock) : 0,
 			shipping: shipping || 'Free Shipping',
-			image: imageUrl,
+			image: image || '',
 			seller: req.user.id
 		});
 
@@ -110,23 +85,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
 	try {
-		// Handle base64 image in update too
-		if (req.body.image && req.body.image.startsWith('data:image/')) {
-			const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
-			if (!fs.existsSync(uploadsDir)) {
-				fs.mkdirSync(uploadsDir, { recursive: true });
-			}
-			const matches = req.body.image.match(/^data:image\/(\w+);base64,(.+)$/);
-			if (matches) {
-				const ext = matches[1];
-				const data = matches[2];
-				const filename = `product_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-				const filepath = path.join(uploadsDir, filename);
-				fs.writeFileSync(filepath, Buffer.from(data, 'base64'));
-				req.body.image = `/uploads/${filename}`;
-			}
-		}
-
+		// Image is stored directly as-is (base64 data URL or external URL)
 		const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
 			runValidators: true
@@ -162,3 +121,4 @@ export const getMyProducts = async (req, res) => {
 		res.status(500).json({ message: error.message });
 	}
 };
+

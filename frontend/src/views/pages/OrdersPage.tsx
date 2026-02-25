@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const OrdersPage: React.FC = () => {
     const [orders, setOrders] = useState<any[]>([]);
@@ -21,8 +22,7 @@ const OrdersPage: React.FC = () => {
 
     const getImageSrc = (image: string) => {
         if (!image) return 'https://via.placeholder.com/64x64?text=📦';
-        if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
-        return image;
+        return getImageUrl(image) || image;
     };
 
     if (!user) {
@@ -81,9 +81,9 @@ const OrdersPage: React.FC = () => {
                                     </div>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                        order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                                            order.status === 'confirmed' ? 'bg-indigo-100 text-indigo-700' :
-                                                order.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                                    order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                                        order.status === 'confirmed' ? 'bg-indigo-100 text-indigo-700' :
+                                            order.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
                                     }`}>{order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}</span>
                             </div>
 

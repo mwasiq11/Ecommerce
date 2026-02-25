@@ -5,11 +5,11 @@ import { apiService } from '../../services/apiService';
 import { Product } from '../../types';
 import { useCartController } from '../../controllers/useCartController';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const getImageSrc = (image: string) => {
     if (!image) return 'https://via.placeholder.com/400x400?text=No+Image';
-    if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
-    return image;
+    return getImageUrl(image) || image;
 };
 
 const ProductDetailPage: React.FC = () => {

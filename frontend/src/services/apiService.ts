@@ -1,4 +1,6 @@
-const API_BASE = '/api';
+import { getApiBaseUrl } from '../utils/url';
+
+const API_BASE = `${getApiBaseUrl()}/api`;
 
 const getAuthHeaders = (): HeadersInit => {
     const token = localStorage.getItem('token');

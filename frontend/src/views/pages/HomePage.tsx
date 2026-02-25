@@ -6,6 +6,7 @@ import { apiService } from '../../services/apiService';
 import { Product } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
+import { getImageUrl } from '../../utils/url';
 
 const mapProduct = (p: any): Product => ({
     id: p._id, title: p.title, price: p.price, originalPrice: p.originalPrice,
@@ -15,8 +16,7 @@ const mapProduct = (p: any): Product => ({
 
 const getImageSrc = (image: string) => {
     if (!image) return 'https://via.placeholder.com/300x300?text=No+Image';
-    if (image.startsWith('/uploads')) return `http://localhost:5000${image}`;
-    return image;
+    return getImageUrl(image) || image;
 };
 
 const HomePage: React.FC = () => {
@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
                                 <div className="flex items-center gap-3 mb-4">
                                     {user.avatar ? (
                                         <img
-                                            src={user.avatar.startsWith('/uploads') ? `http://localhost:5000${user.avatar}` : user.avatar}
+                                            src={getImageUrl(user.avatar)}
                                             className="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover"
                                             alt={user.name}
                                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}

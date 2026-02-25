@@ -256,7 +256,7 @@ const SellProductPage: React.FC = () => {
                                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                                 Listing Product...
                             </span>
-                        ) : '🚀 List Product for Sale'}
+                        ) : 'List Product for Sale'}
                     </Button>
                 </div>
             </form>
